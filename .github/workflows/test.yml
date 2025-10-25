@@ -1,0 +1,118 @@
+name: Test Data Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
+
+jobs:
+  test-pipeline:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run full pipeline
+      run: |
+        echo "Starting complete ETL pipeline..."
+        python run_all.py
+    
+    - name: Verify database output
+      run: |
+        if [ ! -f db/marketdata.db ]; then
+          echo ":( Database file not created"
+          exit 1
+        fi
+        echo ":) Database file exists"
+        
+        # Check database has data
+        python -c "
+        import sqlite3
+        conn = sqlite3.connect('db/marketdata.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT COUNT(*) FROM prices_daily')
+        count = cursor.fetchone()[0]
+        conn.close()
+        if count == 0:
+            raise Exception('Database is empty')
+        print(f':) Database contains {count} rows')
+        "
+    
+    - name: Verify CSV reports
+      run: |
+        if [ ! -f reports/summary.csv ]; then
+          echo ":( Summary CSV not created"
+          exit 1
+        fi
+        echo ":) Summary CSV exists"
+        
+        if [ ! -f reports/volatility.csv ]; then
+          echo ":( Volatility CSV not created"
+          exit 1
+        fi
+        echo ":) Volatility CSV exists"
+        
+        # Verify CSVs have content (more than just header)
+        summary_lines=$(wc -l < reports/summary.csv)
+        if [ "$summary_lines" -lt 2 ]; then
+          echo ":( Summary CSV is empty"
+          exit 1
+        fi
+        echo ":) Summary CSV has $summary_lines lines"
+    
+    - name: Verify chart output
+      run: |
+        if [ ! -f reports/charts/adj_close_example.png ]; then
+          echo ":( Chart not created"
+          exit 1
+        fi
+        echo ":) Chart exists"
+        
+        # Verify it's actually a PNG file
+        file reports/charts/adj_close_example.png | grep -q PNG
+        echo ":) Chart is a valid PNG image"
+    
+    - name: Upload artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pipeline-outputs-python-${{ matrix.python-version }}
+        path: |
+          reports/
+          db/marketdata.db
+        retention-days: 7
+    
+    - name: Pipeline Summary
+      if: success()
+      run: |
+        echo "Huzzah, pipeline completed successfully!"
+        echo "-----------------------------------"
+        echo "Python Version: ${{ matrix.python-version }}"
+        echo "Database: $(ls -lh db/marketdata.db | awk '{print $5}')"
+        echo "Reports generated: $(ls reports/*.csv | wc -l)"
+        echo "Charts generated: $(ls reports/charts/*.png | wc -l)"
