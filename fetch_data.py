@@ -47,43 +47,40 @@ def fetch_market_data(tickers, start_date, end_date):
                 ticker,
                 start=start_date,
                 end=end_date,
-                progress=False,
+                progress=False
             )
             
             if df.empty:
                 print("⚠ No data")
                 continue
             
-            # Normalize column names (yfinance returns multi-index for single ticker)
+            # Reset index to make Date a column
             df = df.reset_index()
             
-            # Flatten multi-index columns if present
-            if isinstance(df.columns, pd.MultiIndex):
-                df.columns = [col[0] if col[1] == '' else col[1] for col in df.columns]
-            
-            # Standardize column names
+            # Normalize column names to lowercase with underscores
             df.columns = df.columns.str.lower().str.replace(' ', '_')
+            
+            # Handle the 'Adj Close' -> 'adj_close' variation
+            # yfinance may return 'adj_close' or 'adjclose'
+            if 'adj_close' not in df.columns and 'adjclose' in df.columns:
+                df = df.rename(columns={'adjclose': 'adj_close'})
             
             # Add symbol column
             df['symbol'] = ticker
             
-            # Rename columns to match schema
-            column_mapping = {
-                'date': 'date',
-                'open': 'open',
-                'high': 'high',
-                'low': 'low',
-                'close': 'close',
-                'adj_close': 'adj_close',
-                'volume': 'volume'
-            }
+            # Define required columns
+            required_cols = ['date', 'open', 'high', 'low', 'close', 'adj_close', 'volume']
             
-            df = df.rename(columns=column_mapping)
+            # Check for missing columns
+            missing = [col for col in required_cols if col not in df.columns]
+            if missing:
+                print(f"✗ Missing columns: {missing}")
+                continue
             
             # Select and order columns
             df = df[['date', 'symbol', 'open', 'high', 'low', 'close', 'adj_close', 'volume']]
             
-            # Convert date to string format
+            # Convert date to string format (YYYY-MM-DD)
             df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')
             
             all_data.append(df)
