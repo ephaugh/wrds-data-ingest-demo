@@ -48,7 +48,6 @@ def fetch_market_data(tickers, start_date, end_date):
                 start=start_date,
                 end=end_date,
                 progress=False,
-                show_errors=False
             )
             
             if df.empty:
