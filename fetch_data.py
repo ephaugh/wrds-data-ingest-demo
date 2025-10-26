@@ -7,40 +7,6 @@ from datetime import datetime, timedelta
 import pandas as pd
 import yfinance as yf
 
-# helper
-def normalize_dataframe_index_and_columns(df):
-    """
-    Normalize DataFrame index and columns to handle MultiIndex
-    
-    Args:
-        df: DataFrame potentially with MultiIndex
-        
-    Returns:
-        DataFrame with normalized single-level index and columns
-    """
-    # Normalize index
-    if isinstance(df.index, pd.MultiIndex):
-        # Turn MultiIndex into a flat Index of strings
-        df.index = pd.Index(df.index.to_flat_index()).map(str)
-    else:
-        # Ensure index is string-like if you rely on .str operations
-        try:
-            df.index = df.index.astype(str)
-        except Exception:
-            pass
-    
-    # Normalize columns
-    if isinstance(df.columns, pd.MultiIndex):
-        # Flatten MultiIndex columns by joining levels
-        df.columns = ['_'.join([str(c) for c in col if c != '']).strip('_') 
-                      for col in df.columns.values]
-        df.columns = pd.Index(df.columns)
-    
-    # Ensure column names are strings
-    df.columns = df.columns.astype(str)
-    
-    return df
-
 # Configuration
 DEFAULT_TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "JPM", "V", "PG", "XOM", "NVDA"]
 LOOKBACK_DAYS = 365
@@ -78,11 +44,13 @@ def fetch_market_data(tickers, start_date, end_date):
             print(f"  → Downloading {ticker}...", end=" ", flush=True)
             
             # Download data for single ticker
+            # CRITICAL: Set auto_adjust=False to get both Close and Adj Close
             df = yf.download(
                 ticker,
                 start=start_date,
                 end=end_date,
-                progress=False
+                progress=False,
+                auto_adjust=False  # This ensures we get Adj Close column
             )
             
             if df is None or df.empty:
@@ -90,33 +58,39 @@ def fetch_market_data(tickers, start_date, end_date):
                 print("⚠ No data")
                 continue
             
-            # Normalize index and columns to handle MultiIndex
-            df = normalize_dataframe_index_and_columns(df)
+            # Handle MultiIndex columns from yfinance
+            if isinstance(df.columns, pd.MultiIndex):
+                # Flatten MultiIndex: ('Close', 'AAPL') -> 'Close'
+                # For single ticker, level 1 is just the ticker name, so we only need level 0
+                df.columns = df.columns.get_level_values(0)
             
             # Reset index to make Date a column
             df = df.reset_index()
             
             # Normalize column names to lowercase with underscores
-            df.columns = df.columns.str.lower().str.replace(' ', '_').str.replace('__', '_')
-            
-            # Handle various 'Adj Close' variations
-            if 'adj_close' not in df.columns:
-                if 'adjclose' in df.columns:
-                    df = df.rename(columns={'adjclose': 'adj_close'})
-                elif 'adj__close' in df.columns:
-                    df = df.rename(columns={'adj__close': 'adj_close'})
+            df.columns = df.columns.str.lower().str.replace(' ', '_')
             
             # Add symbol column
             df['symbol'] = ticker
             
-            # Define required columns
-            required_cols = ['date', 'open', 'high', 'low', 'close', 'adj_close', 'volume']
+            # Map to expected schema
+            column_mapping = {
+                'date': 'date',
+                'open': 'open',
+                'high': 'high', 
+                'low': 'low',
+                'close': 'close',
+                'adj_close': 'adj_close',
+                'volume': 'volume'
+            }
             
-            # Check for missing columns
+            # Check if we have the required columns
+            required_cols = ['date', 'open', 'high', 'low', 'close', 'adj_close', 'volume']
             missing = [col for col in required_cols if col not in df.columns]
+            
             if missing:
-                failures[ticker] = f"Missing columns: {missing}"
-                print(f"✗ Missing columns: {missing}")
+                failures[ticker] = f"Missing columns: {missing} (found: {list(df.columns)})"
+                print(f"✗ Missing: {missing}")
                 continue
             
             # Select and order columns
