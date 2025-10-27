@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WRDS Data Pipeline Portfolio - Everett Haugh</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            border-bottom: 3px solid #011F5B;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #011F5B;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .contact-info {
+            color: #666;
+            font-size: 0.95em;
+            margin-top: 10px;
+        }
+        
+        .contact-info a {
+            color: #990000;
+            text-decoration: none;
+        }
+        
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+        
+        h2 {
+            color: #011F5B;
+            font-size: 1.6em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        h3 {
+            color: #333;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+        
+        .highlight-box {
+            background: #f0f4f8;
+            border-left: 4px solid #011F5B;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+        
+        .highlight-box strong {
+            color: #011F5B;
+        }
+        
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tech-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .tech-item strong {
+            color: #011F5B;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .pipeline-section {
+            background: linear-gradient(135deg, #011F5B 0%, #990000 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+        
+        .pipeline-section h3 {
+            color: white;
+            margin-top: 0;
+        }
+        
+        .pipeline-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .step {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .step-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .outputs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .output-item {
+            background: #fff;
+            border: 2px solid #011F5B;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .output-item h4 {
+            color: #011F5B;
+            margin-bottom: 8px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #990000;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-right: 8px;
+            margin-bottom: 5px;
+        }
+        
+        .github-link {
+            background: #24292e;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        .github-link:hover {
+            background: #011F5B;
+        }
+        
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+            
+            .github-link {
+                background: #333;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>WRDS-Style Data Pipeline Portfolio</h1>
+            <div class="subtitle">Academic Research Data Workflow Demonstration</div>
+            <div class="contact-info">
+                <strong>Everett Haugh</strong> | 
+                <a href="mailto:everett@haughmail.com">everett@haughmail.com</a> | 
+                (202) 209-2084 | 
+                <a href="https://github.com/ephaugh/wrds-data-ingest-demo" target="_blank">github.com/ephaugh/wrds-data-ingest-demo</a>
+            </div>
+        </header>
+
+        <section>
+            <h2>Project Overview</h2>
+            <p>
+                This portfolio demonstrates a production-ready data pipeline that mirrors the academic research workflows 
+                used by platforms like Wharton Research Data Services (WRDS). The project showcases end-to-end ETL 
+                (Extract-Transform-Load) capabilities, database management, analytics processing, and automated testing—all 
+                with a focus on reproducibility, data integrity, and operational excellence.
+            </p>
+            
+            <div class="highlight-box">
+                <strong>Technical Leadership Demonstrated:</strong> This project reflects the same principles required for 
+                managing a data engineering team: architecting scalable pipelines, implementing version-controlled transformations, 
+                ensuring data quality, documenting processes for reproducibility, and establishing CI/CD best practices.
+            </div>
+        </section>
+
+        <section>
+            <h2>Core Competencies Demonstrated</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <strong>Data Pipeline Architecture</strong>
+                    ETL separation, idempotent operations, error handling
+                </div>
+                <div class="tech-item">
+                    <strong>Database Engineering</strong>
+                    Schema design, indexing, upsert patterns, SQLite
+                </div>
+                <div class="tech-item">
+                    <strong>CI/CD Implementation</strong>
+                    GitHub Actions, automated testing, cross-platform validation
+                </div>
+                <div class="tech-item">
+                    <strong>Data Governance</strong>
+                    Version control, data lineage, reproducibility standards
+                </div>
+                <div class="tech-item">
+                    <strong>Analytics Engineering</strong>
+                    Financial metrics, volatility calculations, visualization
+                </div>
+                <div class="tech-item">
+                    <strong>Technical Documentation</strong>
+                    Comprehensive README, inline comments, usage examples
+                </div>
+            </div>
+        </section>
+
+        <section class="pipeline-section">
+            <h3>Pipeline Architecture</h3>
+            <div class="pipeline-steps">
+                <div class="step">
+                    <div class="step-number">1. Extract</div>
+                    <strong>fetch_data.py</strong>
+                    <p style="font-size: 0.9em; margin-top: 8px;">
+                        Retrieves daily OHLCV market data from Yahoo Finance API. Handles MultiIndex DataFrames, 
+                        normalizes column names, implements robust error handling for API failures.
+                    </p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2. Load</div>
+                    <strong>load_to_db.py</strong>
+                    <p style="font-size: 0.9em; margin-top: 8px;">
+                        Stores normalized data in SQLite with proper schema, composite primary keys, and indexing. 
+                        Implements idempotent upsert pattern for data consistency.
+                    </p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3. Analyze</div>
+                    <strong>analyze_data.py</strong>
+                    <p style="font-size: 0.9em; margin-top: 8px;">
+                        Computes financial metrics (daily returns, rolling volatility), generates CSV reports, 
+                        creates visualizations using matplotlib in headless mode.
+                    </p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4. Orchestrate</div>
+                    <strong>run_all.py</strong>
+                    <p style="font-size: 0.9em; margin-top: 8px;">
+                        Executes complete workflow with progress tracking, error handling, and execution time reporting. 
+                        Ensures reproducible end-to-end results.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Technical Implementation</h2>
+            
+            <h3>Database Schema Design</h3>
+            <p>
+                The <code>prices_daily</code> table uses a composite primary key on <code>(date, symbol)</code> to ensure 
+                data integrity and prevent duplicates. Strategic indexing on <code>(symbol, date)</code> enables efficient 
+                queries for time-series analysis—critical for research workflows processing millions of rows.
+            </p>
+            
+            <h3>Data Quality & Reproducibility</h3>
+            <ul>
+                <li><strong>Idempotent Operations:</strong> Pipeline can be re-run without creating duplicate data, ensuring consistent results</li>
+                <li><strong>Version-Controlled Transformations:</strong> All data processing logic is tracked in Git for audit trails</li>
+                <li><strong>Documented Data Lineage:</strong> Clear separation of Extract-Transform-Load stages for traceability</li>
+                <li><strong>Error Handling:</strong> Graceful handling of API failures, missing data, and edge cases</li>
+            </ul>
+            
+            <h3>CI/CD & Testing</h3>
+            <p>
+                GitHub Actions workflow tests the complete pipeline across Python 3.10, 3.11, and 3.12, validating:
+            </p>
+            <ul>
+                <li>Database creation and data integrity (row count validation)</li>
+                <li>CSV report generation with content verification</li>
+                <li>Chart creation and PNG format validation</li>
+                <li>Cross-platform compatibility</li>
+            </ul>
+            <p>
+                This automated testing ensures reproducibility—any researcher or team member can clone the repository 
+                and achieve identical results, a cornerstone of academic data workflows.
+            </p>
+        </section>
+
+        <section>
+            <h2>Pipeline Outputs</h2>
+            <div class="outputs-grid">
+                <div class="output-item">
+                    <h4>Database</h4>
+                    <p><code>db/marketdata.db</code></p>
+                    <p style="font-size: 0.9em; margin-top: 8px;">
+                        SQLite database with ~2,500 rows of daily price data, proper indexing, and composite primary keys 
+                        for 10 major stocks over 365 days.
+                    </p>
+                </div>
+                <div class="output-item">
+                    <h4>Summary Statistics</h4>
+                    <p><code>reports/summary.csv</code></p>
+                    <p style="font-size: 0.9em; margin-top: 8px;">
+                        Per-symbol metrics: observation count, mean daily returns, standard deviation, and average trading volume.
+                    </p>
+                </div>
+                <div class="output-item">
+                    <h4>Volatility Metrics</h4>
+                    <p><code>reports/volatility.csv</code></p>
+                    <p style="font-size: 0.9em; margin-top: 8px;">
+                        20-day rolling volatility (annualized) for each symbol, computed using standard financial formulas.
+                    </p>
+                </div>
+                <div class="output-item">
+                    <h4>Visualization</h4>
+                    <p><code>reports/charts/adj_close_example.png</code></p>
+                    <p style="font-size: 0.9em; margin-top: 8px;">
+                        Professional price chart demonstrating automated visualization capabilities for reporting and presentations.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Technology Stack</h2>
+            <div style="margin: 20px 0;">
+                <span class="badge">Python 3.10+</span>
+                <span class="badge">pandas</span>
+                <span class="badge">yfinance</span>
+                <span class="badge">matplotlib</span>
+                <span class="badge">SQLite</span>
+                <span class="badge">GitHub Actions</span>
+                <span class="badge">CI/CD</span>
+                <span class="badge">Git Version Control</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>Alignment with WRDS Mission</h2>
+            <p>
+                This project directly demonstrates the technical leadership and data engineering expertise required 
+                for the WRDS Information Technology Director role:
+            </p>
+            <ul>
+                <li><strong>Data Pipeline Management:</strong> Built scalable ETL architecture handling real-world data sources with proper error handling</li>
+                <li><strong>Team Leadership Readiness:</strong> Documented processes enable knowledge transfer and training, critical for managing data engineers</li>
+                <li><strong>SDLC Implementation:</strong> Version control, automated testing, and iterative development demonstrate full software development lifecycle</li>
+                <li><strong>Academic Standards:</strong> Reproducibility, documentation, and data integrity align with WRDS's commitment to research-grade data</li>
+                <li><strong>Technical Communication:</strong> Comprehensive README and code comments show ability to translate technical concepts for diverse stakeholders</li>
+                <li><strong>Project Management:</strong> Modular design with clear separation of concerns enables portfolio management and feature prioritization</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Key Metrics</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <strong>~2,500 Rows</strong>
+                    Daily market data processed and stored
+                </div>
+                <div class="tech-item">
+                    <strong>10 Tickers</strong>
+                    Multi-symbol data normalization
+                </div>
+                <div class="tech-item">
+                    <strong>365 Days</strong>
+                    One year of historical data coverage
+                </div>
+                <div class="tech-item">
+                    <strong>3 Python Versions</strong>
+                    Cross-platform CI/CD testing
+                </div>
+                <div class="tech-item">
+                    <strong>100% Pass Rate</strong>
+                    Automated test suite validation
+                </div>
+                <div class="tech-item">
+                    <strong>30-60 Seconds</strong>
+                    Complete pipeline execution time
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Future Enhancements</h2>
+            <p>This architecture is designed for extensibility. Potential enhancements include:</p>
+            <ul>
+                <li>PostgreSQL migration for production-scale deployments</li>
+                <li>Apache Airflow orchestration for scheduled workflows</li>
+                <li>REST API for programmatic data access</li>
+                <li>Docker containerization for deployment portability</li>
+                <li>Interactive dashboards using Plotly or Dash</li>
+                <li>Data quality monitoring and alerting systems</li>
+            </ul>
+        </section>
+
+        <div style="text-align: center;">
+            <a href="https://github.com/ephaugh/wrds-data-ingest-demo" class="github-link" target="_blank">
+                View Full Repository on GitHub →
+            </a>
+        </div>
+
+        <footer>
+            <p><strong>Everett Haugh</strong></p>
+            <p>Application for Information Technology Director Position | WRDS, University of Pennsylvania</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">
+                This portfolio demonstrates technical competencies in data pipeline engineering, database management, 
+                CI/CD implementation, and technical documentation—core requirements for leading WRDS's Data Team.
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
